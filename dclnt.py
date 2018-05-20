@@ -5,9 +5,9 @@ import collections
 from nltk import pos_tag
 
 
-def flat(_list):
+def flat(arg_list):
     """ [(1,2), (3,4)] -> [1, 2, 3, 4]"""
-    return sum([list(item) for item in _list], [])
+    return sum([list(item) for item in arg_list], [])
 
 
 def is_verb(word):
@@ -16,17 +16,16 @@ def is_verb(word):
     pos_info = pos_tag([word])
     return pos_info[0][1] == 'VB'
 
-Path = ''
 
-def get_trees(_path, with_filenames=False, with_file_content=False):
+def get_trees(path='', with_filenames=False, with_file_content=False):
     filenames = []
     trees = []
-    path= Path
     for dirname, dirs, files in os.walk(path, topdown=True):
         for file in files:
             if file.endswith('.py'):
                 filenames.append(os.path.join(dirname, file))
-                if len(filenames) == 100:
+                print('len', len(filenames))
+                if len(filenames) > 10:
                     break
     print('total %s files' % len(filenames))
     for filename in filenames:
@@ -44,7 +43,7 @@ def get_trees(_path, with_filenames=False, with_file_content=False):
                 trees.append((filename, tree))
         else:
             trees.append(tree)
-    print('trees generated')
+    print('trees generated:', trees)
     return trees
 
 
@@ -72,26 +71,33 @@ def get_top_verbs_in_path(path, top_size=10):
     print('functions extracted')
     verbs = flat([get_verbs_from_function_name(function_name) for function_name in fncs])
     return collections.Counter(verbs).most_common(top_size)
+
+
 def get_top_functions_names_in_path(path, top_size=10):
     t = get_trees(path)
     nms = [f for f in flat([[node.name.lower() for node in ast.walk(t) if isinstance(node, ast.FunctionDef)] for t in t]) if not (f.startswith('__') and f.endswith('__'))]
     return collections.Counter(nms).most_common(top_size)
 
-
+'''
 wds = []
 projects = [
-    'django',
-    'flask',
-    'pyramid',
-    'reddit',
     'requests',
-    'sqlalchemy',
+    'nltk',
+    'six',
+    'dclnt'
 ]
 for project in projects:
     path = os.path.join('.', project)
     wds += get_top_verbs_in_path(path)
 
+
 top_size = 200
 print('total %s words, %s unique' % (len(wds), len(set(wds))))
 for word, occurence in collections.Counter(wds).most_common(top_size):
-    print(word, occurence)
+    print(word, occurence, '1')
+'''
+
+if __name__ == '__main__':
+    print('Start from here: ')
+    print(get_trees('/Users/mentat_ij/otus_task_01'))
+    print('Yes')
