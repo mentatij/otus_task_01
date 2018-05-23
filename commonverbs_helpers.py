@@ -3,8 +3,8 @@ import collections
 from nltk import pos_tag
 
 
-def flat(arg_list):
-    """Converts [(1, 2), (3, 4)] to [1, 2, 3, 4]"""
+def make_lat(arg_list):
+    """[(1, 2), (3, 4)] -> [1, 2, 3, 4]"""
     return sum([list(item) for item in arg_list], [])
 
 
@@ -16,7 +16,7 @@ def is_verb(word):
 
 
 def is_function_builtin(function_name):
-    return (function_name.startswith('__') and function_name.endswith('__'))
+    return function_name.startswith('__') and function_name.endswith('__')
 
 
 def split_snake_case(name):
